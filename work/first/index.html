@@ -109,7 +109,10 @@
 
     // 第6問  id='q6'の要素をクリックしたらこの要素を2秒かけてmargin-topとmargin-leftを100pxの位置に移動させよ。
     $('#q6').click(function() {
-      $(this).animate({'marginTop': 100, 'marginLeft': 100}, 2000);
+      $(this).animate({
+        'marginTop': "100px",
+        'marginLeft': "100px"
+       }, 2000);
     });
 
 
