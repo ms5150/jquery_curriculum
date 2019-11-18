@@ -90,18 +90,18 @@
           var selected = $(this).val();
           var list = $('.list li');
 
-          list.each(function() {
-            var category = $(this).data('category-type');
+          list.each(function(i, elem) {
+            var category = $(elem).data('category-type');
             if (selected === "all") {
               list.show();
             } else if (selected === category) {
-              $(this).show();
+              $(elem).show();
             } else {
-              $(this).hide();
+              $(elem).hide();
             }
           });
         });
-        
+
       });
 
 
