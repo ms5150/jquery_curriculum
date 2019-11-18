@@ -22,15 +22,15 @@
     <script src="../../common/js/jquery.js"></script>
     <script>
       $(function() {
-
+        var num = $('.rest-count').text();
         $(".input").keyup(function() {
           var count = $(".input").val().replace(/\s+/g,'').length;
-          var countText = 30 - count;
+          var countText = num - count;
           var counter = $(".rest-count");
 
           counter.text(countText);
-          
-          if (count > 30) {
+
+          if (count > num) {
             counter.addClass("red");
           } else {
             counter.removeClass("red");
