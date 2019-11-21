@@ -26,6 +26,77 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function() {
+
+
+        // var indexNum = 0;
+        // var length = $(".slider-list li").length;
+        //
+        // $(".is-prev").click(function() {
+        //   indexNum--;
+        //   if (indexNum < 0) {
+        //     indexNum = length - 1;
+        //   }
+        //   $('.slider-list').animate({left: indexNum * -600}, );
+        // });
+        //
+        // $(".is-next").click(function() {
+        //   indexNum++;
+        //   if (indexNum > length - 1) {
+        //     indexNum = 0;
+        //   }
+        //   $('.slider-list').animate({left: indexNum * -600}, );
+        // });
+
+
+        var locate = [];
+        var indexNum = 0;
+
+        $('.slider-list li').each(function(index) {
+          var width = $(this).width() * -index;
+          locate.push(width);
+        });
+
+        $('.slider-ctrl-btn').click(function() {
+          var length = $('.slider-list li').length;
+
+          switch ($(this).data('ctrl')) {
+            case 'prev':
+              indexNum--;
+              if (indexNum < 0) {
+                indexNum = length - 1;
+              }
+              break;
+            
+            case 'next':
+              indexNum++;
+              if (indexNum > length - 1) {
+                indexNum = 0;
+              }
+              break;
+          }
+          $('.slider-list').animate({left: locate[indexNum]} );
+        });
+
+        // $('.slider-ctrl-btn').click(function() {
+        //   if ($(this).data('ctrl') === 'prev') {
+        //     indexNum--;
+        //     if (indexNum < 0) {
+        //       indexNum = length - 1;
+        //     }
+        //   } else {
+        //     indexNum++;
+        //     if (indexNum > length - 1) {
+        //       indexNum = 0;
+        //     }
+        //   }
+        //   $('.slider-list').animate({left: locate[indexNum]} );
+        // });
+
+      });
+
+
+
       // 今回やるのはスライドショーです。
       // 右方向には右のボタンを押すと移動し、左方向には左のボタンを押すと移動する。また右端にいる状態で右のボタンを押すと最初の位置に戻り、 左端にいる状態で左のボタンを押すと最後の位置に移動する。data属性にprev,nextを記述してあるのでこちらを取得すると楽です。
       // 位置情報は配列に格納しておき、右のボタンをクリックするたびに配列の添字を1追加し、左のボタンをクリックすると配列の添字を1減らします。そうすることによって次の座標が取得できます。その座標にアニメーションさせるととても楽です。
@@ -34,6 +105,7 @@
       // .data() 要素のdata属性を取得します。
       // .width() 要素の幅を取得します。
       // .length 要素の個数を取得します。
+
     </script>
   </body>
 </html>
