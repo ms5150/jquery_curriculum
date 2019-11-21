@@ -30,31 +30,13 @@
     <script>
       $(function() {
 
-        var home = $("p.title[data-scroll-place-type='home']");
-        var news = $("p.title[data-scroll-place-type='news']");
-        var about = $("p.title[data-scroll-place-type='about']");
-        var homePlace = home.offset().top;
-        var newsPlace = news.offset().top;
-        var aboutPlace = about.offset().top;
         var page = $('html,body');
         var toTop = $('.scrollTopBtn');
 
         $('.menu__btn').click(function() {
-          var data = $(this).data('scroll-place-type');
-
-          switch (data) {
-            case 'home':
-              page.animate({ scrollTop: homePlace } );
-              break;
-
-            case 'news':
-              page.animate({ scrollTop: newsPlace } );
-              break;
-
-            case 'about':
-              page.animate({ scrollTop: aboutPlace } );
-              break;
-          }
+          var btnData = $(this).data('scroll-place-type');
+          var target = $('.title[data-scroll-place-type="'+btnData+'"]');
+          page.animate({ scrollTop: target.offset().top } );
         });
 
         $(window).scroll(function() {
