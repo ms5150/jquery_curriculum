@@ -51,10 +51,12 @@
 
         var locate = [];
         var indexNum = 0;
+        var width = 0;
 
         $('.slider-list li').each(function(index) {
-          var width = $(this).width() * -index;
           locate.push(width);
+          width = width + $(this).width();
+          // var width = $(this).width() * -index;
         });
 
         $('.slider-ctrl-btn').click(function() {
@@ -67,7 +69,7 @@
                 indexNum = length - 1;
               }
               break;
-            
+
             case 'next':
               indexNum++;
               if (indexNum > length - 1) {
@@ -75,7 +77,7 @@
               }
               break;
           }
-          $('.slider-list').animate({left: locate[indexNum]} );
+          $('.slider-list').animate({left: -locate[indexNum]} );
         });
 
         // $('.slider-ctrl-btn').click(function() {
