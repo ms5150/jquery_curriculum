@@ -35,7 +35,8 @@
 
         $('.menu__btn').click(function() {
           var btnData = $(this).data('scroll-place-type');
-          var target = $('.title[data-scroll-place-type="'+btnData+'"]');
+          var target = $('.title[data-scroll-place-type="' + btnData + '"]');
+          // var target = $(`.title[data-scroll-place-type="${btnData}"]`);
           page.animate({ scrollTop: target.offset().top } );
         });
 
