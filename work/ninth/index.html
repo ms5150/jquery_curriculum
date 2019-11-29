@@ -24,13 +24,15 @@
         })
         .done(function(data) {
 
-          $.each(data.colorsArray, function(){
-            $('.colorList').append('<li class="colorList__item"></li>');
+          var list = "":
+          $.each(data.colorsArray, function(i){ //$.eachは配列、オブジェクト等jQueryオブジェクト以外にも使える
+            list += '<li class="colorList__item">' +
+                      '<p class="colorList__title" style="background-color: ' + data.colorsArray[i].hexValue + ';">' + data.colorsArray[i].colorName + '</p>' +
+                    '</li>'
+
+            $('.colorList').html(list);
           });
 
-          for (var i = 0; i < $('.colorList__item').length; i++) {
-            $('.colorList__item:eq(' + i + ')').html('<p class="colorList__title" style="background-color: ' + data.colorsArray[i].hexValue + ';">' + data.colorsArray[i].colorName + '</p>');
-          }
 
           // appendを使った方法
           // $.each(data.colorsArray, function(){
