@@ -26,6 +26,131 @@
     </div>
     <script src="../../common/js/jquery.js"></script>
     <script>
+      $(function(){
+
+
+        var pageNum = 0;//楽天ブックス総合検索API 出力パラメーターのページ番号であるpage
+        var prevSearchWord = '';
+
+        $('#js-search-button').click(function() {
+          var searchWord = $('#js-search-word').val();//inputタグに入力された文字を変数に格納
+
+          //キーワードが同じ場合は、次の20件が出るようにpageNumに1を加算
+          pageNum++;
+
+
+          //ワードが変わったかどうかの判別をする為に、prevSearchWordと入力されたワードを比較して処理する。
+          //検索ワードを変えて検索し直した場合は、既に出ているリストを消し、新しい検索結果の最初の20件が出るようにする。
+          //新しいワードをprevSearchWordに代入する事で、次にワードが変わった時にも同じ処理が可能
+           if (searchWord != prevSearchWord) {
+              pageNum = 1;
+              $('.lists').empty();
+              $('.message').remove();
+              prevSearchWord = searchWord;
+          };
+
+
+          $.ajax({
+            url: 'https://app.rakuten.co.jp/services/api/BooksTotal/Search/20130522',
+            type: 'GET',
+            datatype: 'json',
+            data: {
+              // 「区分:サービス固有パラメーター」を確認して、必要な情報をdata内に入れましょう。
+              applicationId: '1019399324990976605', // (今回はこのIDを使用してください)
+              booksGenreId: '001',
+              keyword: searchWord,
+              hits: 20,//1ページを最大20件とする
+              page: pageNum//現在のページ数
+            },
+          }).done(function(data) {
+                doneAjax(data);
+
+            //通信成功時の処理
+            function doneAjax(data) {
+
+              $('.message').remove();//既に出ているエラーメッセージを削除
+
+              //検索結果が0若しくは検索結果を表示しきった後に表示するメッセージ
+              //data.countは検索数
+              if (data.count === 0) {
+                $('.lists').before(
+                  '<div class="message">' +
+                  '検索結果が見つかりませんでした。<br>' +
+                  '別のワードで検索して下さい。' +
+                  '</div>');
+                };
+
+                //検索結果がある場合と、検索結果が20件以上あり、さらに検索ボタンを押した場合
+                //通信して受け取ったdataの中の配列をeachで回して、itemListに加えていく。
+                //配列の中身を全て足し終わったら、prependで挿入。
+                var itemList = '';
+                $.each(data.Items, function(index) {
+                  var items = data.Items[index].Item;
+                  var title = items.title;//商品タイトル
+                  var image = items.largeImageUrl;//商品画像 200x200ピクセル
+                  var author = items.author;//著者名
+                  var publisherName = items.publisherName;//出版社名
+
+                  itemList +=
+                  '<li class="lists__item">' +
+                  '<div class="lists__item__inner">' +
+                  '<a href="" class="lists__item__link" target="_blank"></a>' +
+                  '<img src="' + image + '" class="lists__item__img" alt="">' +
+                  '<p class="lists__item__detail">作品名：' + title + '</p>' +
+                  '<p class="lists__item__detail">作者　：' + author + '</p>' +
+                  '<p class="lists__item__detail">出版社：' + publisherName + '</p>' +
+                  '</div>' +
+                  '</li>';
+
+                });
+                $('.lists').prepend(itemList);
+
+            }
+
+
+          }).fail(function(){
+              failAjax();
+
+          //通信失敗時の処理
+          function failAjax() {
+
+            //ボタンを連打した場合等は、既に表示されているリストやメッセージが消えるようにする。
+            //消した後に、新たにエラーメッセージを表示。
+            $('.lists').empty();
+            $('.message').remove();
+            $('.lists').before(
+              '<div class="message">' +
+              '通信が出来ませんでした。<br>' +
+              'ネットワークの接続状況を確認して下さい。' +
+              '</div>');
+
+              //検索ワードが設定されていない場合と、1文字の場合のエラーメッセージ。
+              //先ほどと同様、既に出ているものは消えるようにしている。
+              var wordVal = $('#js-search-word').val();
+              if (wordVal.length === 0) {//lengthプロパティで、入力されたワードの要素数(ここでは文字数)を取得
+                $('.lists').empty();
+                $('.message').remove();
+                $('.lists').before(
+                  '<div class="message">' +
+                  '検索ワードが入力されていません。<br>' +
+                  '2文字以上の検索ワードを入力して下さい。' +
+                  '</div>');
+                } else if (wordVal.length === 1 ) {
+                  $('.lists').empty();
+                  $('.message').remove();
+                  $('.lists').before(
+                    '<div class="message">' +
+                    '検索ワードが1文字です。<br>' +
+                    '2文字以上の検索ワードを入力して下さい。' +
+                    '</div>');
+                  };
+              }
+          });
+
+        });
+
+
+      });
       // 楽天ブックスの総合検索APIを使って製作してください。
       // answerの挙動を良く見てね！
       //
