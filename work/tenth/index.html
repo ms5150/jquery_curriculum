@@ -29,7 +29,7 @@
       $(function(){
 
 
-        var pageNum = 0;//楽天ブックス総合検索API 出力パラメーターのページ番号であるpage
+        var pageNum = 0;
         var prevSearchWord = '';
 
         $('#js-search-button').click(function() {
@@ -42,7 +42,7 @@
           //ワードが変わったかどうかの判別をする為に、prevSearchWordと入力されたワードを比較して処理する。
           //検索ワードを変えて検索し直した場合は、既に出ているリストを消し、新しい検索結果の最初の20件が出るようにする。
           //新しいワードをprevSearchWordに代入する事で、次にワードが変わった時にも同じ処理が可能
-           if (searchWord != prevSearchWord) {
+           if (searchWord !== prevSearchWord) {
               pageNum = 1;
               $('.lists').empty();
               $('.message').remove();
@@ -84,21 +84,16 @@
                 //通信して受け取ったdataの中の配列をeachで回して、itemListに加えていく。
                 //配列の中身を全て足し終わったら、prependで挿入。
                 var itemList = '';
-                $.each(data.Items, function(index) {
-                  var items = data.Items[index].Item;
-                  var title = items.title;//商品タイトル
-                  var image = items.largeImageUrl;//商品画像 200x200ピクセル
-                  var author = items.author;//著者名
-                  var publisherName = items.publisherName;//出版社名
+                $.each(data.Items, function(index, val) {
 
                   itemList +=
                   '<li class="lists__item">' +
                   '<div class="lists__item__inner">' +
                   '<a href="" class="lists__item__link" target="_blank"></a>' +
-                  '<img src="' + image + '" class="lists__item__img" alt="">' +
-                  '<p class="lists__item__detail">作品名：' + title + '</p>' +
-                  '<p class="lists__item__detail">作者　：' + author + '</p>' +
-                  '<p class="lists__item__detail">出版社：' + publisherName + '</p>' +
+                  '<img src="' + val.Item.largeImageUrl + '" class="lists__item__img" alt="">' +
+                  '<p class="lists__item__detail">作品名：' + val.Item.title + '</p>' +
+                  '<p class="lists__item__detail">作者　：' + val.Item.author + '</p>' +
+                  '<p class="lists__item__detail">出版社：' + val.Item.publisherName + '</p>' +
                   '</div>' +
                   '</li>';
 
@@ -108,43 +103,65 @@
             }
 
 
-          }).fail(function(){
-              failAjax();
+          }).fail(function(jqXHR){
+              failAjax(jqXHR);
 
           //通信失敗時の処理
-          function failAjax() {
+          function failAjax(jqXHR) {
 
-            //ボタンを連打した場合等は、既に表示されているリストやメッセージが消えるようにする。
-            //消した後に、新たにエラーメッセージを表示。
-            $('.lists').empty();
-            $('.message').remove();
-            $('.lists').before(
-              '<div class="message">' +
-              '通信が出来ませんでした。<br>' +
-              'ネットワークの接続状況を確認して下さい。' +
-              '</div>');
 
-              //検索ワードが設定されていない場合と、1文字の場合のエラーメッセージ。
-              //先ほどと同様、既に出ているものは消えるようにしている。
-              var wordVal = $('#js-search-word').val();
-              if (wordVal.length === 0) {//lengthプロパティで、入力されたワードの要素数(ここでは文字数)を取得
-                $('.lists').empty();
-                $('.message').remove();
-                $('.lists').before(
-                  '<div class="message">' +
-                  '検索ワードが入力されていません。<br>' +
-                  '2文字以上の検索ワードを入力して下さい。' +
-                  '</div>');
-                } else if (wordVal.length === 1 ) {
-                  $('.lists').empty();
-                  $('.message').remove();
-                  $('.lists').before(
-                    '<div class="message">' +
-                    '検索ワードが1文字です。<br>' +
-                    '2文字以上の検索ワードを入力して下さい。' +
-                    '</div>');
-                  };
+            switch (jqXHR.status) {
+              case 400: if (searchWord.length === 0) {
+                          $('.lists').empty();
+                          $('.message').remove();
+                          $('.lists').before(
+                            '<div class="message">' +
+                            '検索ワードが入力されていません。<br>' +
+                            '2文字以上の検索ワードを入力して下さい。' +
+                            '</div>');
+                        } else if (searchWord.length === 1) {
+                          $('.lists').empty();
+                          $('.message').remove();
+                          $('.lists').before(
+                            '<div class="message">' +
+                            '検索ワードが1文字です。<br>' +
+                            '2文字以上の検索ワードを入力して下さい。' +
+                            '</div>');
+                          };
+
+              break;
+
+              case 429:
+              $('.lists').empty();
+              $('.message').remove();
+              $('.lists').before(
+                '<div class="message">' +
+                '操作が速すぎます！<br>' +
+                '落ち着いてもう一度ボタンを押してください。' +
+                '</div>');
+              break;
+
+              case 0:
+              $('.lists').empty();
+              $('.message').remove();
+              $('.lists').before(
+                '<div class="message">' +
+                '通信が出来ませんでした。<br>' +
+                'ネットワークの接続状況を確認して下さい。' +
+                '</div>');
+              break;
+
+              default:
+              $('.lists').empty();
+              $('.message').remove();
+              $('.lists').before(
+                '<div class="message">' +
+                '予期せぬエラーが発生しました。<br>' +
+                '</div>');
+              break;
+
               }
+            }
           });
 
         });
