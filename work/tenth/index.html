@@ -108,59 +108,43 @@
 
           //通信失敗時の処理
           function failAjax(jqXHR) {
-
+            var errorMessage = '';
 
             switch (jqXHR.status) {
               case 400: if (searchWord.length === 0) {
-                          $('.lists').empty();
-                          $('.message').remove();
-                          $('.lists').before(
-                            '<div class="message">' +
-                            '検索ワードが入力されていません。<br>' +
-                            '2文字以上の検索ワードを入力して下さい。' +
-                            '</div>');
+                          errorMessage = '検索ワードが入力されていません。<br>' + '2文字以上の検索ワードを入力して下さい';
                         } else if (searchWord.length === 1) {
-                          $('.lists').empty();
-                          $('.message').remove();
-                          $('.lists').before(
-                            '<div class="message">' +
-                            '検索ワードが1文字です。<br>' +
-                            '2文字以上の検索ワードを入力して下さい。' +
-                            '</div>');
+                          errorMessage = '検索ワードが1文字です。<br>' + '2文字以上の検索ワードを入力して下さい。';
                           };
-
               break;
 
               case 429:
-              $('.lists').empty();
-              $('.message').remove();
-              $('.lists').before(
-                '<div class="message">' +
-                '操作が速すぎます！<br>' +
-                '落ち着いてもう一度ボタンを押してください。' +
-                '</div>');
+              errorMessage = '操作が速すぎます！<br>' + '落ち着いてもう一度ボタンを押してください。';
+              break;
+
+              case 500:
+              errorMessage = 'システムエラーが発生しています。<br>' + '長時間続くようであれば、' + '<a href="https://webservice.faq.rakuten.co.jp/app/ask1/" style="color: blue">こちら</a>' + 'からお問い合わせください。<br>';
+              break;
+
+              case 503:
+              errorMessage = 'メンテナンス中です。<br>' + '暫く時間を置いてからご利用ください。';
               break;
 
               case 0:
-              $('.lists').empty();
-              $('.message').remove();
-              $('.lists').before(
-                '<div class="message">' +
-                '通信が出来ませんでした。<br>' +
-                'ネットワークの接続状況を確認して下さい。' +
-                '</div>');
+              errorMessage = '通信が出来ませんでした。<br>' + 'ネットワークの接続状況を確認して下さい。';
               break;
 
               default:
+              errorMessage = '予期せぬエラーが発生しました。';
+              break;
+
+              }
               $('.lists').empty();
               $('.message').remove();
               $('.lists').before(
                 '<div class="message">' +
-                '予期せぬエラーが発生しました。<br>' +
+                errorMessage +
                 '</div>');
-              break;
-
-              }
             }
           });
 
