@@ -111,11 +111,12 @@
             var errorMessage = '';
 
             switch (jqXHR.status) {
-              case 400: if (searchWord.length === 0) {
-                          errorMessage = '検索ワードが入力されていません。<br>' + '2文字以上の検索ワードを入力して下さい';
-                        } else if (searchWord.length === 1) {
-                          errorMessage = '検索ワードが1文字です。<br>' + '2文字以上の検索ワードを入力して下さい。';
-                          };
+              case 400:
+              if (searchWord.length === 0) {
+                errorMessage = '検索ワードが入力されていません。<br>' + '2文字以上の検索ワードを入力して下さい';
+              } else if (searchWord.length === 1) {
+                errorMessage = '検索ワードが1文字です。<br>' + '2文字以上の検索ワードを入力して下さい。';
+              };
               break;
 
               case 429:
